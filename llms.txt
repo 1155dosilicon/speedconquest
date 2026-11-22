@@ -1,0 +1,15 @@
+# speedconquest
+
+> Conquistas (troféus) offline estilo PS5 para o Need for Speed Underground 2 (PC) rodando no Wine, no Linux. Um programa em Rust à parte lê a memória do jogo (/proc/pid/mem, sem injetar DLL), desbloqueia 42 conquistas por perfil de save (bronze, prata, ouro e platina), mostra um popup por cima do jogo no gamescope e tem uma janela egui com a lista. Sem conta e sem internet. Exclusivo do NFSU2 (SPEED2.EXE, sha256 f9dd86c0…). Licença MIT.
+
+## Documentação
+- [README](https://raw.githubusercontent.com/1155dosilicon/speedconquest/main/README.md): o que faz, como funciona, estado, requisitos (Wine, gamescope, ptrace_scope=0, Rust 1.95+), instalação, uso e a lista completa de conquistas
+- [AGENTS.md](https://raw.githubusercontent.com/1155dosilicon/speedconquest/main/AGENTS.md): guia para agentes de IA: comandos, mapa do código, regras e testes
+- [Notas técnicas do NFSU2](https://raw.githubusercontent.com/1155dosilicon/speedconquest/main/jogos/nfsu2/NOTAS.md): endereços de memória, estruturas do jogo e receitas de teste
+
+## Dados do jogo
+- [jogo.toml](https://raw.githubusercontent.com/1155dosilicon/speedconquest/main/jogos/nfsu2/jogo.toml): exe aceito, variáveis de memória (módulo + deslocamento + cadeia de ponteiros) e estatísticas derivadas
+- [conquistas.toml](https://raw.githubusercontent.com/1155dosilicon/speedconquest/main/jogos/nfsu2/conquistas.toml): as 42 conquistas com metas
+
+## Opcional
+- [PLANO.md](https://raw.githubusercontent.com/1155dosilicon/speedconquest/main/PLANO.md): diário de desenvolvimento, decisões e estado de cada versão

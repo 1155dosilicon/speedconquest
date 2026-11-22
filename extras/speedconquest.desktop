@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=speedconquest
+GenericName=Conquistas
+Comment=Conquistas dos jogos do Wine (lista por perfil)
+Exec=speedconquest janela
+Icon=speedconquest
+Terminal=false
+Categories=Game;
+StartupWMClass=speedconquest

@@ -1,0 +1,337 @@
+# Lista APROVADA pelo usuário em 2026-11-21.
+# Metas calibradas pela tabela de prêmios da carreira (jogos/nfsu2/NOTAS.md):
+# as 224 corridas pagam US$ 547.950 no total.
+
+[[conquista]]
+id = "dinheiro_10k"
+nivel = "bronze"
+nome = "Primeiros US$ 10.000"
+descricao = "Tenha US$ 10.000 de uma vez na carreira."
+progresso = { var = "dinheiro", meta = 10000 }
+
+[[conquista]]
+id = "ganhos_100k"
+nivel = "prata"
+nome = "Seis dígitos"
+descricao = "Ganhe US$ 100.000 no total na carreira."
+progresso = { var = "ganhos", meta = 100000 }
+
+[[conquista]]
+id = "ganhos_500k"
+nivel = "ouro"
+nome = "Meio milhão no asfalto"
+descricao = "Ganhe US$ 500.000 no total na carreira."
+progresso = { var = "ganhos", meta = 500000 }
+
+# v0.2 — APROVADAS pelo usuário em 2026-11-21 (metas propostas por mim, sem calibrar
+# por dados do jogo; referência do drift: adversários no médio ~127 mil/evento, 10 mil/drift).
+# Velocidade e drift são recordes ao vivo: sem avisos de 25/50/75%.
+
+[[conquista]]
+id = "velocidade_200"
+nivel = "bronze"
+nome = "Duzentão"
+descricao = "Chegue a 200 km/h."
+progresso = { var = "velocidade", meta = 200 }
+marcos = false
+
+[[conquista]]
+id = "velocidade_300"
+nivel = "prata"
+nome = "Barreira dos 300"
+descricao = "Chegue a 300 km/h."
+progresso = { var = "velocidade", meta = 300 }
+marcos = false
+
+[[conquista]]
+id = "velocidade_350"
+nivel = "ouro"
+nome = "Míssil de rua"
+descricao = "Chegue a 350 km/h."
+progresso = { var = "velocidade", meta = 350 }
+marcos = false
+
+# Odômetro em metros.
+[[conquista]]
+id = "odometro_100"
+nivel = "bronze"
+nome = "Rodando a cidade"
+descricao = "Dirija 100 km."
+progresso = { var = "odometro", meta = 100000 }
+
+[[conquista]]
+id = "odometro_1000"
+nivel = "prata"
+nome = "Mil quilômetros"
+descricao = "Dirija 1.000 km."
+progresso = { var = "odometro", meta = 1000000 }
+
+[[conquista]]
+id = "odometro_5000"
+nivel = "ouro"
+nome = "Estrada sem fim"
+descricao = "Dirija 5.000 km."
+progresso = { var = "odometro", meta = 5000000 }
+
+[[conquista]]
+id = "drift_evento_100k"
+nivel = "bronze"
+nome = "De lado"
+descricao = "Faça 100 mil pontos num evento de drift."
+progresso = { var = "drift_total", meta = 100000 }
+marcos = false
+
+[[conquista]]
+id = "drift_unico_25k"
+nivel = "prata"
+nome = "Drift sem fim"
+descricao = "Faça um único drift de 25 mil pontos."
+progresso = { var = "drift_melhor", meta = 25000 }
+marcos = false
+
+[[conquista]]
+id = "drift_evento_500k"
+nivel = "ouro"
+nome = "Rei do drift"
+descricao = "Faça 500 mil pontos num evento de drift."
+progresso = { var = "drift_total", meta = 500000 }
+marcos = false
+
+# v0.3 — APROVADAS pelo usuário em 2026-11-21. Saltos ficaram para depois (sem
+# detector de "no ar" confiável); cambalhota pelo vetor "pra cima" do carro
+# (dica do usuário: hidráulica encostado na parede dá cambalhotas grandes).
+
+[[conquista]]
+id = "cambalhota_360"
+nivel = "bronze"
+nome = "Capotou!"
+descricao = "Dê uma cambalhota completa (360°)."
+progresso = { var = "giro", meta = 360 }
+marcos = false
+
+[[conquista]]
+id = "cambalhota_720"
+nivel = "prata"
+nome = "Cambalhota dupla"
+descricao = "Gire 720° numa cambalhota só."
+progresso = { var = "giro", meta = 720 }
+marcos = false
+
+[[conquista]]
+id = "cambalhota_1080"
+nivel = "ouro"
+nome = "Circo de Bayview"
+descricao = "Gire 1.080° (3 voltas) numa cambalhota só."
+progresso = { var = "giro", meta = 1080 }
+marcos = false
+
+[[conquista]]
+id = "voltas_25"
+nivel = "prata"
+nome = "Dublê"
+descricao = "Dê 25 voltas completas em cambalhotas."
+progresso = { var = "voltas", meta = 25 }
+
+[[conquista]]
+id = "pe_embaixo_30s"
+nivel = "prata"
+nome = "Pé embaixo"
+descricao = "Fique 30 s seguidos acima de 250 km/h."
+progresso = { var = "tempo_250", meta = 30 }
+marcos = false
+
+# Saltos — APROVADOS pelo usuário em 2026-11-21, calibrados pelos saltos dele
+# (43 m a 132 km/h; a distância cresce ~com o quadrado da velocidade).
+
+[[conquista]]
+id = "salto_30"
+nivel = "bronze"
+nome = "Decolagem"
+descricao = "Faça um salto de 30 m."
+progresso = { var = "salto", meta = 30 }
+marcos = false
+
+[[conquista]]
+id = "salto_50"
+nivel = "prata"
+nome = "Voo rasante"
+descricao = "Faça um salto de 50 m."
+progresso = { var = "salto", meta = 50 }
+marcos = false
+
+[[conquista]]
+id = "salto_75"
+nivel = "ouro"
+nome = "Sem asas"
+descricao = "Faça um salto de 75 m."
+progresso = { var = "salto", meta = 75 }
+marcos = false
+
+[[conquista]]
+id = "milhas_aereas"
+nivel = "prata"
+nome = "Milhas aéreas"
+descricao = "Voe 1 km somando todos os saltos."
+progresso = { var = "metros_no_ar", meta = 1000 }
+
+# v0.3b — carreira, APROVADAS pelo usuário em 2026-11-21. Contagens tiradas da
+# tabela do jogo com o mod (ferramentas/nfsu2_listas.py): 222 corridas que contam
+# (56 circuitos, 36 sprints, 36 Street X, 34 drags, 36 drifts, 24 URL), 30 capas
+# (20 revistas, 10 DVDs). Etapas: 1 = prólogo … 6 = Stage 5.
+
+[[conquista]]
+id = "prologo"
+nivel = "bronze"
+nome = "Chegou na cidade"
+descricao = "Conclua o prólogo."
+progresso = { var = "etapas", meta = 1 }
+marcos = false
+
+[[conquista]]
+id = "etapa_1"
+nivel = "bronze"
+nome = "Etapa 1"
+descricao = "Conclua a Stage 1 da carreira."
+progresso = { var = "etapas", meta = 2 }
+marcos = false
+
+[[conquista]]
+id = "etapa_2"
+nivel = "bronze"
+nome = "Etapa 2"
+descricao = "Conclua a Stage 2 da carreira."
+progresso = { var = "etapas", meta = 3 }
+marcos = false
+
+[[conquista]]
+id = "etapa_3"
+nivel = "prata"
+nome = "Etapa 3"
+descricao = "Conclua a Stage 3 da carreira."
+progresso = { var = "etapas", meta = 4 }
+marcos = false
+
+[[conquista]]
+id = "etapa_4"
+nivel = "prata"
+nome = "Etapa 4"
+descricao = "Conclua a Stage 4 da carreira."
+progresso = { var = "etapas", meta = 5 }
+marcos = false
+
+[[conquista]]
+id = "etapa_5"
+nivel = "ouro"
+nome = "Rei de Bayview"
+descricao = "Conclua a Stage 5 e zere a carreira."
+progresso = { var = "etapas", meta = 6 }
+marcos = false
+
+[[conquista]]
+id = "patrocinado"
+nivel = "bronze"
+nome = "Patrocinado"
+descricao = "Assine o primeiro contrato de patrocínio."
+progresso = { var = "patrocinios", meta = 1 }
+marcos = false
+
+[[conquista]]
+id = "capa_revista"
+nivel = "bronze"
+nome = "Capa de revista"
+descricao = "Saia na capa de uma revista."
+progresso = { var = "capas_revista", meta = 1 }
+marcos = false
+
+[[conquista]]
+id = "capa_dvd"
+nivel = "prata"
+nome = "Capa de DVD"
+descricao = "Saia na capa de um DVD."
+progresso = { var = "capas_dvd", meta = 1 }
+marcos = false
+
+[[conquista]]
+id = "capas_todas"
+nivel = "ouro"
+nome = "Garoto-propaganda"
+descricao = "Conquiste as 30 capas de revista e DVD."
+progresso = { var = "capas", meta = 30 }
+
+[[conquista]]
+id = "liga_url"
+nivel = "prata"
+nome = "Liga URL"
+descricao = "Vença os 24 eventos URL."
+progresso = { var = "vitorias_url", meta = 24 }
+
+[[conquista]]
+id = "outruns_50"
+nivel = "prata"
+nome = "Fujão"
+descricao = "Vença 50 outruns na carreira."
+progresso = { var = "outruns", meta = 50 }
+
+[[conquista]]
+id = "especialista_circuito"
+nivel = "prata"
+nome = "Especialista em circuito"
+descricao = "Vença todas as 56 corridas de circuito da carreira."
+progresso = { var = "vitorias_circuito", meta = 56 }
+
+[[conquista]]
+id = "especialista_sprint"
+nivel = "prata"
+nome = "Especialista em sprint"
+descricao = "Vença todas as 36 corridas de sprint da carreira."
+progresso = { var = "vitorias_sprint", meta = 36 }
+
+[[conquista]]
+id = "especialista_streetx"
+nivel = "prata"
+nome = "Especialista em Street X"
+descricao = "Vença todas as 36 corridas de Street X da carreira."
+progresso = { var = "vitorias_streetx", meta = 36 }
+
+[[conquista]]
+id = "especialista_drag"
+nivel = "prata"
+nome = "Especialista em drag"
+descricao = "Vença todas as 34 corridas de drag da carreira."
+progresso = { var = "vitorias_drag", meta = 34 }
+
+[[conquista]]
+id = "especialista_drift"
+nivel = "prata"
+nome = "Especialista em drift"
+descricao = "Vença todas as 36 corridas de drift da carreira."
+progresso = { var = "vitorias_drift", meta = 36 }
+
+[[conquista]]
+id = "invicto"
+nivel = "ouro"
+nome = "Invicto"
+descricao = "Vença as 222 corridas da carreira."
+progresso = { var = "vitorias", meta = 222 }
+
+[[conquista]]
+id = "passeio_no_parque"
+nivel = "prata"
+nome = "Passeio no parque"
+descricao = "Vença um circuito 30 s à frente do 2º."
+progresso = { var = "passeios", meta = 1 }
+marcos = false
+
+[[conquista]]
+id = "mao_de_relojoeiro"
+nivel = "prata"
+nome = "Mão de relojoeiro"
+descricao = "Vença um drag só com trocas perfeitas."
+progresso = { var = "drags_perfeitos", meta = 1 }
+marcos = false
+
+[[conquista]]
+id = "platina"
+nivel = "platina"
+nome = "Lenda do Underground"
+descricao = "Desbloqueie todas as outras conquistas."

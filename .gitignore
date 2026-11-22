@@ -1,0 +1,5 @@
+/target
+ghidra/proj/
+__pycache__/
+ghidra/analise.log
+ghidra/*.txt

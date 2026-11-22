@@ -1,0 +1,300 @@
+# Need for Speed Underground 2 (PC, 32-bit, sem ASLR: SPEED2.EXE carrega em 0x400000).
+id = "nfsu2"
+nome = "Need for Speed Underground 2"
+# Variável com o nome do save ativo (vazia = nenhum perfil carregado).
+perfil = "perfil"
+# Antes de carregar um save o jogo escreve isto no lugar do nome (visto 2026-11-21).
+sem_perfil = ["No Profile"]
+
+[exe]
+nome = "SPEED2.EXE"
+bits = 32
+# sha256 das versões aceitas (outra versão do exe = recusa, os endereços seriam outros).
+sha256 = ["f9dd86c054878ce6276beb07c1fd61874f7a1e4bf1f241b084c65b73e24168a7"]
+
+
+# Conferido 2026-11-21: troca de UNIX para TESTEB ao criar/carregar perfil.
+[var.perfil]
+tipo = "texto"
+tamanho = 16
+endereco = "SPEED2.EXE+0x43A9E0"
+
+# Conferido 2026-11-21: gravar 12345 aqui mudou o valor mostrado na garagem.
+[var.dinheiro]
+tipo = "i32"
+endereco = "SPEED2.EXE+0x461E74"
+# Histórico desligado: o usuário não quer ser monitorado, metas calibradas pela
+# tabela de prêmios (NOTAS.md). `registrar = true` liga de novo se precisar.
+
+# Conferido 2026-11-21: posição do carro do jogador em metros (x, y, z; z = altura).
+# A derivada bate com o velocímetro (36 mph no HUD, 34–38 pela posição). Endereço
+# fixo no .bss do exe, vale no free roam e no Quick Race. Velocidade escalar não
+# existe pronta na memória (o jogo guarda o vetor), por isso calculamos.
+[var.posicao]
+tipo = "vec3"
+endereco = "SPEED2.EXE+0x42BE80"
+
+# Conferido 2026-11-21 (Ghidra: HUD de drift FUN_004c85d0 + adversários no Quick Race):
+# 0x8900AC = jogadores (o 0 é o humano) → +4 → +0x1C → +0x1D4 → lista de pontuação
+# → 1º item = pontuação do corredor (float). +0x2C = total do evento, +0x44 = melhor
+# drift. Adversários a cada 0x420 bytes (bateram com o placar final: 127.244 etc.).
+# Só existe em corrida de drift: no circuito a lista está vazia (ponteiro nulo → a
+# variável some), fora de corrida o jogador nem existe.
+[var.drift_total]
+tipo = "f32"
+endereco = "SPEED2.EXE+0x4900AC"
+ponteiros = [0x4, 0x1C, 0x1D4, 0x0, 0x2C]
+
+[var.drift_melhor]
+tipo = "f32"
+endereco = "SPEED2.EXE+0x4900AC"
+ponteiros = [0x4, 0x1C, 0x1D4, 0x0, 0x44]
+
+# Odômetro em metros (teletransporte não conta). Guardado por perfil.
+[derivada.odometro]
+distancia_de = "posicao"
+
+# km/h ao vivo, média de 0,5 s.
+[derivada.velocidade]
+velocidade_de = "posicao"
+
+# Ganhos totais: soma de cada vez que o dinheiro subiu (gastar não desconta).
+[derivada.ganhos]
+soma_aumentos_de = "dinheiro"
+
+# Conferido 2026-11-21 (Ghidra: FUN_0046d7e0 copia daqui a matriz para 0x82BE80):
+# 0x8900AC = jogador 0 → +4 = objeto do carro (+0x60 posição, +0x70 velocidade
+# da física em m/s, +0x90/+0xA0/+0xB0 = linhas da orientação). +0xB0 = vetor
+# "pra cima" do carro (z = 1 de pé, -1 de cabeça para baixo). O objeto muda de
+# endereço a cada corrida; a cadeia acompanha.
+[var.cima]
+tipo = "vec3"
+endereco = "SPEED2.EXE+0x4900AC"
+ponteiros = [0x4, 0xB0]
+
+# Graus da cambalhota atual (180 por meia-volta). Ao vivo.
+[derivada.giro]
+giro_de = "cima"
+
+# Voltas completas (360°) em cambalhotas, somadas por perfil.
+[derivada.voltas]
+voltas_de = "cima"
+
+# Segundos seguidos a 250 km/h ou mais. Ao vivo.
+[derivada.tempo_250]
+tempo_acima_de = "velocidade"
+limite = 250
+
+# Saltos (calibrado 2026-11-21 com 3 saltos de verdade do usuário no morro do
+# centro: 43/33/31 m a ~125 km/h). Física do carro: posição, velocidade (m/s) e
+# altura de cada roda (+0x168 + 0x40*i; no ar todas param no fim de curso).
+# Nos saltos grandes o jogo entra em câmera lenta (~41%): por isso a medida é
+# distância, não tempo no ar.
+[var.pos_carro]
+tipo = "vec3"
+endereco = "SPEED2.EXE+0x4900AC"
+ponteiros = [0x4, 0x60]
+
+[var.vel_carro]
+tipo = "vec3"
+endereco = "SPEED2.EXE+0x4900AC"
+ponteiros = [0x4, 0x70]
+
+[var.rodas]
+tipo = "floats"
+quantos = 4
+passo = 0x40
+endereco = "SPEED2.EXE+0x4900AC"
+ponteiros = [0x4, 0x168]
+
+# Metros (horizontal) do salto em andamento. Ao vivo.
+[derivada.salto]
+salto_de = "pos_carro"
+rodas = "rodas"
+velocidade_vetor = "vel_carro"
+
+# Metros de todos os saltos, somados no pouso. Guardada por perfil.
+[derivada.metros_no_ar]
+saltos_somados_de = "pos_carro"
+rodas = "rodas"
+velocidade_vetor = "vel_carro"
+
+# --- Carreira (v0.3b, conferido 2026-11-21 lendo o perfil UNIX) ---
+# Estrutura Career do nfsu2-re (yugecin): profileData 0x83A9D0 + 0x20370 =
+# 0x85AD40 (o dinheiro em +0x7134 é o `dinheiro` acima). Tudo vem do save e
+# fica vivo na memória; as derivadas de lista nunca descem (ver avaliador).
+# Registro do que foi feito (`Career7B00`, 384 de 8 B em +0x7B00): +0 hash da
+# corrida/capa/loja, +6 = 1 quando vencida/feita (Career::DoPostRaceThings).
+[var.feitos]
+tipo = "u8s"
+quantos = 384
+passo = 8
+endereco = "SPEED2.EXE+0x462846"
+
+[var.feitos_hash]
+tipo = "u32s"
+quantos = 384
+passo = 8
+endereco = "SPEED2.EXE+0x462840"
+
+# Etapas (`CareerStage`, 0x104 B a partir de +0x72D8; 0 = prólogo, 1–5 = Stage 1–5):
+# +0xFC etapa concluída (CareerStage::IncrementStageIfFinished), +0xDC outruns
+# vencidos (Career::OnOutrunFinish soma 1 só quando vence), +0xE8 patrocinador
+# assinado (ponteiro, 0 = nenhum).
+[var.etapa_fim]
+tipo = "u8s"
+quantos = 6
+passo = 0x104
+endereco = "SPEED2.EXE+0x462114"
+
+[var.etapa_outruns]
+tipo = "i32s"
+quantos = 6
+passo = 0x104
+endereco = "SPEED2.EXE+0x4620F4"
+
+[var.etapa_patrocinio]
+tipo = "u32s"
+quantos = 6
+passo = 0x104
+endereco = "SPEED2.EXE+0x462100"
+
+# Etapas concluídas: 1 = prólogo, 6 = Stage 5 (fim da carreira).
+[derivada.etapas]
+conta_de = "etapa_fim"
+
+[derivada.patrocinios]
+conta_de = "etapa_patrocinio"
+
+[derivada.outruns]
+soma_de = "etapa_outruns"
+
+# Vitórias por tipo, pelo hash (listas.toml, geradas do jogo aberto). Mesma regra
+# do jogo nas estatísticas: URL é a recompensa, não o tipo da pista.
+[derivada.vitorias_circuito]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["circuito"]
+
+[derivada.vitorias_sprint]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["sprint"]
+
+[derivada.vitorias_streetx]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["streetx"]
+
+[derivada.vitorias_drag]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["drag"]
+
+[derivada.vitorias_drift]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["drift"]
+
+[derivada.vitorias_url]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["url"]
+
+[derivada.vitorias]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["circuito", "sprint", "streetx", "drag", "drift", "url"]
+
+[derivada.capas_revista]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["revista"]
+
+[derivada.capas_dvd]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["dvd"]
+
+[derivada.capas]
+conta_de = "feitos"
+igual = 1
+chaves = "feitos_hash"
+em = ["revista", "dvd"]
+
+# --- Resultado da corrida (v0.3b parte 2, conferido 2026-11-21 no Quick Race) ---
+# Tabela de resultados em 0x85036C: uma linha de 0x224 B por corredor, ordenada
+# pela colocação, escrita ~3 s depois que o jogador termina (FUN_0054CCA0 →
+# FUN_00515DB0) e só então: Restart/sair não apagam, a próxima corrida sobrescreve.
+# Quem ainda corre já entra com status 1 e tempo projetado. Campos (i32):
+# +0 colocação · +4 id (0 = jogador, IA = 100+) · +8 status (1 terminou, 3 eliminado,
+# 6/7 venceu/perdeu outrun, 8 motor estourado, 9 destruído, 0xB tempo esgotado) ·
+# +0xC tempo (1/4000 s) · +0xF4 voltas na liderança · +0x10C/+0x110 velocidade
+# máx./média (m/s, f32) · +0x124 trocas de marcha · +0x128 trocas perfeitas.
+# (Tela de estatísticas pós-corrida: FUN_004BF9E0…FUN_004BFD00.)
+[var.resultados]
+tipo = "i32s"
+quantos = 75
+passo = 4
+grupos = 8
+passo_grupo = 0x224
+endereco = "SPEED2.EXE+0x45036C"
+
+# Corredores da corrida (4 contadores, a soma = linhas válidas da tabela).
+[var.corredores]
+tipo = "i32s"
+quantos = 4
+passo = 4
+endereco = "SPEED2.EXE+0x49E7C0"
+
+# Número da pista, gravado na largada (FUN_0053FEB0). Centena = tipo, igual no
+# Quick Race e na carreira: 40 circuito, 41 sprint (e drift downhill), 42/44 drag,
+# 43 drift, 46 Street X, 47 URL.
+[var.pista]
+tipo = "i32"
+endereco = "SPEED2.EXE+0x49E7A0"
+
+[corrida]
+tabela = "resultados"
+corredores = "corredores"
+pista = "pista"
+id_jogador = 0
+terminou = 1
+ticks_por_s = 4000
+campo = { posicao = 0, id = 1, status = 2, tempo = 3, trocas = 73, trocas_perfeitas = 74 }
+
+# Circuitos comuns (não URL) vencidos com 30 s sobre o 2º.
+[derivada.passeios]
+corridas_de = "resultados"
+pistas = [40]
+vencer = true
+vantagem_min_s = 30
+
+# Drags vencidos só com trocas perfeitas.
+[derivada.drags_perfeitos]
+corridas_de = "resultados"
+pistas = [42, 44]
+vencer = true
+trocas_perfeitas = true
+
+# Como a janela mostra o valor de cada variável de progresso (sem unidade = contagem).
+[unidade]
+dinheiro = { texto = "US$", antes = true }
+ganhos = { texto = "US$", antes = true }
+odometro = { texto = "km", divisor = 1000 }  # guardado em metros
+velocidade = { texto = "km/h" }
+drift_total = { texto = "pts" }
+drift_melhor = { texto = "pts" }
+giro = { texto = "°" }
+tempo_250 = { texto = "s" }
+salto = { texto = "m" }
+metros_no_ar = { texto = "m" }

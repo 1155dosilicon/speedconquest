@@ -1,0 +1,49 @@
+#!/bin/bash
+# nfsu2 — abre o Need for Speed Underground 2 (Wine, ~/.wine) com as conquistas do speedconquest.
+#   nfsu2              no jogo-gamescope, resolução da tela (popups das conquistas por cima do jogo)
+#   nfsu2 --ss 2       com supersampling 2× — ATENÇÃO: a 2732x1536 o SPEED2.EXE fecha com page fault
+#                      logo ao abrir (testado 2026-11-21 no tela-gpu); fica como opção para testar
+#   nfsu2 --simples    direto no Wine, sem gamescope (popup pode não ficar por cima do jogo)
+# Variáveis: WINEPREFIX (padrão ~/.wine), NFSU2_DIR (pasta do jogo, padrão a da instalação da EA).
+# Usa o `jogo-gamescope` se existir (script local do autor); senão chama o gamescope direto.
+# A resolução fica no registro (HKLM\...\Wow6432Node\EA GAMES\Need for Speed Underground 2,
+# g_RacingResolution = 0x80000000|(W<<16)|H); este script grava a certa antes de abrir.
+# O speedconquest é iniciado junto se não estiver rodando, e encerrado quando o jogo fecha.
+set -uo pipefail
+export PATH="$HOME/.local/bin:$PATH"
+export WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+GAME="${NFSU2_DIR:-$WINEPREFIX/drive_c/Program Files (x86)/EA GAMES/Need for Speed Underground 2}"
+CHAVE='HKLM\Software\Wow6432Node\EA GAMES\Need for Speed Underground 2'
+LOGDIR="$HOME/.cache/jogos"
+mkdir -p "$LOGDIR"
+
+SS=1 GS=1
+case ${1:-} in
+  --simples) GS=0 ;;
+  --ss) SS=${2:?uso: nfsu2 --ss N} ;;
+esac
+
+read -r W H < <(xrandr --current 2>/dev/null | awk '/\*/{split($1,a,"x"); print a[1], a[2]; exit}')
+W=${W:-1366} H=${H:-768}
+gw=$((W * SS)) gh=$((H * SS))
+res=$((0x80000000 | (gw << 16) | gh))
+wine reg add "$CHAVE" /v g_RacingResolution /t REG_DWORD /d "$res" /f >/dev/null 2>&1
+
+# Conquistas: sobe o vigia se ainda não estiver rodando (e só derruba o que este script subiu).
+vigia=""
+if command -v speedconquest >/dev/null && ! pgrep -x speedconquest >/dev/null; then
+  setsid speedconquest >>"$LOGDIR/speedconquest.log" 2>&1 &
+  vigia=$!
+fi
+# 1 s de folga: o vigia percebe que o jogo fechou e grava o odômetro antes.
+trap '[[ -n $vigia ]] && { sleep 1; kill "$vigia" 2>/dev/null; }' EXIT
+
+cd "$GAME" || exit 1
+echo "$(date "+%F %T") nfsu2 gamescope=$GS ss=$SS res=${gw}x${gh} vigia=${vigia:-já rodando}" >>"$LOGDIR/nfsu2.log"
+if [[ $GS -eq 0 ]]; then
+  wine SPEED2.EXE
+elif command -v jogo-gamescope >/dev/null; then
+  jogo-gamescope --ss "$SS" -- wine SPEED2.EXE
+else
+  gamescope --backend sdl -f -W "$W" -H "$H" -w "$gw" -h "$gh" -F linear -- wine SPEED2.EXE
+fi
